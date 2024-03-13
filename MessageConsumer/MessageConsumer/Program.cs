@@ -1,5 +1,8 @@
-﻿using MassTransit;
+﻿using Avro;
+using Confluent.SchemaRegistry.Serdes;
+using MassTransit;
 using Messaging.KafkaConsumers.Consumers;
+using Messaging.KafkaConsumers.Messages;
 
 namespace MessageConsumer;
 
@@ -8,19 +11,22 @@ public class Program
     public static async Task Main(string[] args)
     {
         var host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices((_, services) =>
+            .ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                config
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", optional: false);
+            })
+            .ConfigureServices((hostContext, services) =>
             {
                 services.AddMassTransit(x =>
                 {
-                    x.AddConsumer<TestConsumer>();
-                    x.UsingRabbitMq((context, cfg) =>
+                    x.AddRider(rider =>
                     {
-                        cfg.Host("localhost", "/", h =>
+                        rider.UsingKafka((context, k) =>
                         {
-                            h.Username("guest");
-                            h.Password("guest");
+                            k.Host(hostContext.Configuration.GetSection("Kafka:Brokers").Get<string[]>());
                         });
-                        cfg.ConfigureEndpoints(context);
                     });
                 });
 
