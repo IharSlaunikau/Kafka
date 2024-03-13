@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageConsumer", "MessageConsumer\MessageConsumer.csproj", "{36F910A9-FFC5-4B95-9BF7-1B4782EB5CFD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messaging.KafkaConsumers", "..\Messaging.KafkaConsumers\Messaging.KafkaConsumers\Messaging.KafkaConsumers.csproj", "{03A202AC-9494-4E58-A4B9-85D0B025F2E6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messaging.KafkaInfrastructure", "..\Messaging.KafkaInfrastructure\Messaging.KafkaInfrastructure\Messaging.KafkaInfrastructure.csproj", "{46F4B6FB-DFDF-4C93-9E32-8C278C9A7078}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36F910A9-FFC5-4B95-9BF7-1B4782EB5CFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36F910A9-FFC5-4B95-9BF7-1B4782EB5CFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36F910A9-FFC5-4B95-9BF7-1B4782EB5CFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36F910A9-FFC5-4B95-9BF7-1B4782EB5CFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03A202AC-9494-4E58-A4B9-85D0B025F2E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03A202AC-9494-4E58-A4B9-85D0B025F2E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03A202AC-9494-4E58-A4B9-85D0B025F2E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03A202AC-9494-4E58-A4B9-85D0B025F2E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46F4B6FB-DFDF-4C93-9E32-8C278C9A7078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46F4B6FB-DFDF-4C93-9E32-8C278C9A7078}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46F4B6FB-DFDF-4C93-9E32-8C278C9A7078}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46F4B6FB-DFDF-4C93-9E32-8C278C9A7078}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {87746D21-922E-4A0B-8B99-F5C3E1D1ED0A}
+	EndGlobalSection
+EndGlobal
