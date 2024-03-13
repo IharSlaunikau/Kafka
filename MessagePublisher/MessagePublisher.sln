@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagePublisher", "Message
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messaging.KafkaConsumers", "..\Messaging.KafkaConsumers\Messaging.KafkaConsumers\Messaging.KafkaConsumers.csproj", "{34634FCF-1FE1-40E9-A8E2-621FB97BAAAA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messaging.KafkaInfrastructure", "..\Messaging.KafkaInfrastructure\Messaging.KafkaInfrastructure\Messaging.KafkaInfrastructure.csproj", "{F1E0ACBF-702A-4EBA-AA56-1855D50C087E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{34634FCF-1FE1-40E9-A8E2-621FB97BAAAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34634FCF-1FE1-40E9-A8E2-621FB97BAAAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34634FCF-1FE1-40E9-A8E2-621FB97BAAAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1E0ACBF-702A-4EBA-AA56-1855D50C087E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1E0ACBF-702A-4EBA-AA56-1855D50C087E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1E0ACBF-702A-4EBA-AA56-1855D50C087E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1E0ACBF-702A-4EBA-AA56-1855D50C087E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
