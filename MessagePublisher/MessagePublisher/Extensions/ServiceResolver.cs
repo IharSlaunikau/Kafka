@@ -29,13 +29,14 @@ public static class ServiceResolver
     {
         var schemaRegistryClient = GetSchemaRegistryClient();
 
-        var schema = await File.ReadAllTextAsync("Properties\\TaskTest.avsc").WaitAsync(CancellationToken.None);
-        var schema2 = await File.ReadAllTextAsync("Properties\\TaskTest2.avsc").WaitAsync(CancellationToken.None);
+        var schema = await File.ReadAllTextAsync("Properties\\TaskTest.avsc");
+        var schema2 = await File.ReadAllTextAsync("Properties\\TaskTesе2.avsc");
 
         var avroSchema = Avro.Schema.Parse(schema);
         var avroSchema2 = Avro.Schema.Parse(schema2);
 
         var schemaId = await schemaRegistryClient.RegisterSchemaAsync(TaskEventsTopic, avroSchema.ToString());
+        var schemaId2 = await schemaRegistryClient.RegisterSchemaAsync(TaskEventsTopic, avroSchema2.ToString());
     }
 
     public static void RegisterSchemaRegistryClient(this IServiceCollection services)
@@ -51,9 +52,17 @@ public static class ServiceResolver
 
         services.AddMassTransit(busConfig =>
         {
+            busConfig.AddConsumer<TestFirstConsumer>();
+            busConfig.AddConsumer<TestSecondConsumer>();
+            busConfig.AddConsumer<TaskEventConsumer>();
+
             busConfig.UsingInMemory((context, config) => config.ConfigureEndpoints(context));
             busConfig.AddRider(riderConfig =>
             {
+                riderConfig.AddConsumer<TestFirstConsumer>();
+                riderConfig.AddConsumer<TestSecondConsumer>();
+                riderConfig.AddConsumer<TaskEventConsumer>();
+
                 // Specify supported message types here. Support is restricted to types generated via avrogen.exe
                 // tool. Being explicit makes this a lot simpler as we can use Avro Schema objects rather than messing
                 // around with .NET Types / reflection.
