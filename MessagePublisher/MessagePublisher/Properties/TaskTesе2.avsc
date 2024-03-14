@@ -1,0 +1,29 @@
+{
+  "namespace": "Messaging.KafkaConsumers.Messages",
+  "type": "record",
+  "doc": "The event test task is started.",
+  "name": "TaskTest2",
+  "fields": [
+    {
+      "name": "Id",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      },
+      "doc": "The id of the task"
+    },
+    {
+      "name": "StartedDate",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "The date when the task started"
+    },
+    {
+      "name": "StartedOn",
+      "type": "string",
+      "doc": "The worker starting the task"
+    }
+  ]
+}

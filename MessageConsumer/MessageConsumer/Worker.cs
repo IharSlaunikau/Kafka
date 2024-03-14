@@ -1,24 +1,19 @@
-namespace MessageConsumer
+using MassTransit;
+
+namespace MessageConsumer;
+
+public class Worker(ILogger<Worker> logger, IBusControl busControl) : BackgroundService
 {
-    public class Worker : BackgroundService
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        private readonly ILogger<Worker> _logger;
+        await busControl.StartAsync(stoppingToken);
+        logger.LogInformation("Worker running, listening to Kafka Topic");
 
-        public Worker(ILogger<Worker> logger)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            _logger = logger;
+            await Task.Delay(5000, stoppingToken); // wait for 5 seconds in each iteration
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                if (_logger.IsEnabled(LogLevel.Information))
-                {
-                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                }
-                await Task.Delay(1000, stoppingToken);
-            }
-        }
+        await busControl.StopAsync(stoppingToken);
     }
 }

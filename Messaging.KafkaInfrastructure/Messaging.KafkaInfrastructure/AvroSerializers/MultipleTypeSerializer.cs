@@ -1,7 +1,7 @@
 ﻿using Avro.Specific;
 using Confluent.Kafka;
-using Confluent.SchemaRegistry.Serdes;
 using Confluent.SchemaRegistry;
+using Confluent.SchemaRegistry.Serdes;
 
 namespace Messaging.KafkaInfrastructure.AvroSerializers;
 
@@ -22,7 +22,8 @@ public class MultipleTypeSerializer<T> : IAsyncSerializer<T>
     private readonly AvroSerializerConfig? _serializerConfig;
     private readonly Dictionary<string, ISerializerWrapper> _serializers = new();
 
-    public MultipleTypeSerializer(MultipleTypeConfig typeConfig,
+    public MultipleTypeSerializer(
+        MultipleTypeConfig typeConfig,
         ISchemaRegistryClient schemaRegistryClient,
         AvroSerializerConfig? serializerConfig = null)
     {

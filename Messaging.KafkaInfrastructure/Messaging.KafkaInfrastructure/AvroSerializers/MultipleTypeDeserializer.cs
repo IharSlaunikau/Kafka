@@ -61,7 +61,7 @@ public class MultipleTypeDeserializer<T>(MultipleTypeConfig typeConfig, ISchemaR
             var schemaId = IPAddress.NetworkToHostOrder(reader.ReadInt32());
 
             var readerWrapper = await GetReader(schemaId);
-            return (T) readerWrapper.Read(new BinaryDecoder(stream))!;
+            return (T)readerWrapper.Read(new BinaryDecoder(stream))!;
         }
         catch (AggregateException e)
         {

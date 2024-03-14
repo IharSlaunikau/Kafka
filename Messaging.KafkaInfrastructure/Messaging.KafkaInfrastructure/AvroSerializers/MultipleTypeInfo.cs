@@ -1,5 +1,4 @@
-﻿using System;
-using Avro.Specific;
+﻿using Avro.Specific;
 using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
 using Schema = Avro.Schema;

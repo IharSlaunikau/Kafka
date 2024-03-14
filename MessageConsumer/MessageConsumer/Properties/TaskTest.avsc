@@ -1,0 +1,14 @@
+{
+    "type": "record",
+    "name": "TestMessage",
+    "fields": [
+        {
+            "name": "TestProperty1",
+            "type": "string"
+        },
+        {
+            "name": "TestProperty2",
+            "type": "string"
+        }
+    ]
+}
