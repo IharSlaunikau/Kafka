@@ -137,10 +137,10 @@ public static class ServiceResolver
                 {
                     kafkaConfig.Host(KafkaBroker);
                     var groupId = Guid.NewGuid().ToString(); // always start from beginning
-                    kafkaConfig.TopicEndpoint<string, ITaskEvent>(TaskEventsTopic, groupId, topicConfig =>
+                    kafkaConfig.TopicEndpoint<Guid, ITaskEvent>(TaskEventsTopic, groupId, topicConfig =>
                     {
                         topicConfig.AutoOffsetReset = AutoOffsetReset.Earliest;
-                        topicConfig.SetKeyDeserializer(new AvroDeserializer<string>(schemaRegistryClient, null).AsSyncOverAsync());
+                        topicConfig.SetKeyDeserializer(new AvroDeserializer<Guid>(schemaRegistryClient, null).AsSyncOverAsync());
                         topicConfig.SetValueDeserializer(
                             new MultipleTypeDeserializer<ITaskEvent>(multipleTypeConfig, schemaRegistryClient)
                                 .AsSyncOverAsync());
@@ -150,6 +150,8 @@ public static class ServiceResolver
                         // Example of consuming base message type and being able to work with
                         // concrete subclass
                         topicConfig.ConfigureConsumer<TaskEventConsumer>(riderContext);
+
+                        topicConfig.CreateIfMissing();
                     });
                 });
             });

@@ -13,10 +13,11 @@ namespace Messaging.KafkaConsumers.Consumers
     {
         public async Task Consume(ConsumeContext<TaskStarted> context)
         {
-            var ctx = context.ReceiveContext as KafkaReceiveContext<Ignore, TaskStarted>;
+            var ctx = (context.ReceiveContext as KafkaReceiveContext<Guid, ITaskEvent>);
             Console.WriteLine($"Message: {context.Message.Id}, Offset: {ctx?.Offset}");
 
             var message = context.Message;
+
             logger.LogInformation($"Task {message.Id} started on {message.StartedOn} at {message.StartedDate}");
             await Task.CompletedTask;
         }
