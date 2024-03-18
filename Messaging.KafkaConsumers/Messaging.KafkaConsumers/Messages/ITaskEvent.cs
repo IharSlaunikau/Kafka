@@ -5,6 +5,6 @@ public interface ITaskEvent
     Guid Id { get; }
 }
 
-public partial class TestFirstMessage : ITaskEvent;
+public partial class TaskStarted : ITaskEvent;
 
-public partial class TestSecondMessage : ITaskEvent;
+public partial class TaskCompleted : ITaskEvent;

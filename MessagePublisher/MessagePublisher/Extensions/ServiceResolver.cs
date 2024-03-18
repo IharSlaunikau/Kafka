@@ -11,18 +11,20 @@ using MassTransit;
 using Messaging.KafkaConsumers.Consumers;
 using Messaging.KafkaConsumers.Messages;
 using Messaging.KafkaInfrastructure.AvroSerializers;
+using Microsoft.Extensions.Logging;
 
 namespace MessagePublisher.Extensions;
 
 public static class ServiceResolver
 {
     private const string TaskEventsTopic = "task-events";
-    private const string KafkaBroker = "localhost:9092";
-    private const string SchemaRegistryUrl = "http://localhost:8081";
+    private const string KafkaBroker = "host.docker.internal:9092";
+    private const string SchemaRegistryUrl = "http://host.docker.internal:8081";
 
     public static void RegisterBusinessServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddTransient<IPublisherService, PublisherService>();
+        services.AddSingleton<ILoggerFactory, LoggerFactory>();
     }
 
     public static async Task RegisterSchemaAsync()
@@ -35,40 +37,65 @@ public static class ServiceResolver
         var avroSchema = Avro.Schema.Parse(schema);
         var avroSchema2 = Avro.Schema.Parse(schema2);
 
-        var schemaId = await schemaRegistryClient.RegisterSchemaAsync(TaskEventsTopic, avroSchema.ToString());
-        var schemaId2 = await schemaRegistryClient.RegisterSchemaAsync(TaskEventsTopic, avroSchema2.ToString());
+        try
+        {
+            var schemaId = await schemaRegistryClient.RegisterSchemaAsync(TaskEventsTopic, avroSchema.ToString());
+            Console.WriteLine($"Schema with ID {schemaId} has been successfully registered for {TaskEventsTopic}");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Failed to register schema for {TaskEventsTopic}. Error: {e.Message}");
+        }
+
+        await Task.Delay(1000);
+
+        try
+        {
+
+            var schemaId2 = await schemaRegistryClient.RegisterSchemaAsync(TaskEventsTopic, avroSchema2.ToString());
+            Console.WriteLine($"Schema with ID {schemaId2} has been successfully registered for {TaskEventsTopic}");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Failed to register schema for {TaskEventsTopic}. Error: {e.Message}");
+        }
     }
 
     public static void RegisterSchemaRegistryClient(this IServiceCollection services)
     {
         var schemaRegistryClient = GetSchemaRegistryClient();
 
+        if (schemaRegistryClient == null)
+        {
+            throw new Exception("SchemaRegistryClient is not initialized");
+        }
+
         services.AddSingleton<ISchemaRegistryClient>(schemaRegistryClient);
     }
 
-    public static void RegisterMassTransit(this IServiceCollection services)
+    public static void RegisterMassTransit(this IServiceCollection services, ILoggerFactory loggerFactory)
     {
         var schemaRegistryClient = GetSchemaRegistryClient();
 
         services.AddMassTransit(busConfig =>
         {
-            busConfig.AddConsumer<TestFirstConsumer>();
-            busConfig.AddConsumer<TestSecondConsumer>();
+            busConfig.AddConsumer<TaskStartedConsumer>();
+            busConfig.AddConsumer<TaskCompletedConsumer>();
             busConfig.AddConsumer<TaskEventConsumer>();
 
             busConfig.UsingInMemory((context, config) => config.ConfigureEndpoints(context));
             busConfig.AddRider(riderConfig =>
             {
-                riderConfig.AddConsumer<TestFirstConsumer>();
-                riderConfig.AddConsumer<TestSecondConsumer>();
+                riderConfig.AddConsumer<TaskStartedConsumer>();
+                riderConfig.AddConsumer<TaskCompletedConsumer>();
                 riderConfig.AddConsumer<TaskEventConsumer>();
 
                 // Specify supported message types here. Support is restricted to types generated via avrogen.exe
                 // tool. Being explicit makes this a lot simpler as we can use Avro Schema objects rather than messing
                 // around with .NET Types / reflection.
-                var multipleTypeConfig = new MultipleTypeConfigBuilder<ITaskEvent>()
-                    .AddType<TestFirstMessage>(TestFirstMessage.AvroSchema)
-                    .AddType<TestSecondMessage>(TestSecondMessage.AvroSchema)
+                var multipleTypeConfig = new MultipleTypeConfigBuilder<ITaskEvent>(loggerFactory)
+                    .AddType<TaskStarted>(TaskStarted.AvroSchema)
+                    .AddType<TaskCompleted>(TaskCompleted.AvroSchema)
                     .Build();
 
 
@@ -99,10 +126,12 @@ public static class ServiceResolver
                     // to support varying configuration if needed.
                     producerConfig.SetKeySerializer(new AvroSerializer<string>(schemaRegistryClient).AsSyncOverAsync());
                     producerConfig.SetValueSerializer(serializer.AsSyncOverAsync());
+
+
                 });
 
                 // Set up consumers and consuming
-                riderConfig.AddConsumersFromNamespaceContaining<TestFirstMessage>();
+                riderConfig.AddConsumersFromNamespaceContaining<TaskStarted>();
 
                 riderConfig.UsingKafka((riderContext, kafkaConfig) =>
                 {
@@ -115,8 +144,8 @@ public static class ServiceResolver
                         topicConfig.SetValueDeserializer(
                             new MultipleTypeDeserializer<ITaskEvent>(multipleTypeConfig, schemaRegistryClient)
                                 .AsSyncOverAsync());
-                        topicConfig.ConfigureConsumer<TestFirstConsumer>(riderContext);
-                        topicConfig.ConfigureConsumer<TestSecondConsumer>(riderContext);
+                        topicConfig.ConfigureConsumer<TaskStartedConsumer>(riderContext);
+                        topicConfig.ConfigureConsumer<TaskCompletedConsumer>(riderContext);
 
                         // Example of consuming base message type and being able to work with
                         // concrete subclass

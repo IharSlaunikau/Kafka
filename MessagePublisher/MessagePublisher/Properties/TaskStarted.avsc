@@ -2,7 +2,7 @@
   "namespace": "Messaging.KafkaConsumers.Messages",
   "type": "record",
   "doc": "The event test task is started.",
-  "name": "TaskTest",
+  "name": "TaskStarted",
   "fields": [
     {
       "name": "Id",

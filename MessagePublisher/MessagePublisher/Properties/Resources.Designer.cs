@@ -63,9 +63,19 @@ namespace MessagePublisher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] TaskTest {
+        internal static byte[] TaskCompleted {
             get {
-                object obj = ResourceManager.GetObject("TaskTest", resourceCulture);
+                object obj = ResourceManager.GetObject("TaskCompleted", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] TaskStarted {
+            get {
+                object obj = ResourceManager.GetObject("TaskStarted", resourceCulture);
                 return ((byte[])(obj));
             }
         }

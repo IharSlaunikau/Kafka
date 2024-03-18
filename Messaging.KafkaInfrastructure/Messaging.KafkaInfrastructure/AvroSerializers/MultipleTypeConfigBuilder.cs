@@ -1,5 +1,6 @@
 ﻿using Avro;
 using Avro.Specific;
+using Microsoft.Extensions.Logging;
 
 
 namespace Messaging.KafkaInfrastructure.AvroSerializers;
@@ -11,17 +12,17 @@ namespace Messaging.KafkaInfrastructure.AvroSerializers;
 /// </summary>
 /// <typeparam name="TBase">A base type shared by all event types. This is purely to support
 /// MassTransit implementation (see note in <see cref="ITaskEvent"></see>)</typeparam>
-public class MultipleTypeConfigBuilder<TBase>
+/// <summary>
+/// Adds details about a type of message that can be deserialized by MultipleTypeDeserializer.
+/// This must be a type generated using the avrogen.exe tool.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="readerSchema">The Avro schema used to read the object (available via the generated _SCHEMA field</param>
+/// <returns></returns>
+public class MultipleTypeConfigBuilder<TBase>(ILoggerFactory loggerFactory)
 {
     private readonly List<MultipleTypeInfo> _types = new();
 
-    /// <summary>
-    /// Adds details about a type of message that can be deserialized by MultipleTypeDeserializer.
-    /// This must be a type generated using the avrogen.exe tool.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="readerSchema">The Avro schema used to read the object (available via the generated _SCHEMA field</param>
-    /// <returns></returns>
     public MultipleTypeConfigBuilder<TBase> AddType<T>(Schema readerSchema)
         where T : TBase, ISpecificRecord
     {
@@ -33,7 +34,7 @@ public class MultipleTypeConfigBuilder<TBase>
         }
         var messageType = typeof(T);
 
-        var mapping = new MultipleTypeInfo<T>(messageType, readerSchema);
+        var mapping = new MultipleTypeInfo<T>(messageType, readerSchema, loggerFactory);
 
         _types.Add(mapping);
 

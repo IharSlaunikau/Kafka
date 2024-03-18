@@ -3,12 +3,12 @@ using Avro.Specific;
 
 namespace Messaging.KafkaConsumers.Messages;
 
-public partial class TestSecondMessage : ISpecificRecord
+public partial class TaskStarted : ISpecificRecord
 {
-    public static Schema AvroSchema = Avro.Schema.Parse(
+    public static Schema AvroSchema = Schema.Parse(
     @"{
      ""type"": ""record"",
-     ""name"": ""TaskTest2"",
+     ""name"": ""TaskStarted"",
      ""namespace"": ""Messaging.KafkaConsumers.Messages"",
      ""fields"": [
         {
@@ -24,7 +24,7 @@ public partial class TestSecondMessage : ISpecificRecord
           ""doc"": ""The date when the task started"",
           ""type"": {
              ""type"": ""long"",
-             ""logicalType"": ""timestamp-millis""
+             ""logicalType"":  ""timestamp-millis""
           }
         },
         {
@@ -60,7 +60,7 @@ public partial class TestSecondMessage : ISpecificRecord
         {
             case 0: Id = (Guid)fieldValue; break;
             case 1: StartedDate = (DateTime)fieldValue; break;
-            case 2: StartedOn = fieldValue as string; break;
+            case 2: StartedOn = (string)fieldValue; break;
             default: throw new AvroRuntimeException("Bad index " + fieldPos + " in Put()");
         };
     }

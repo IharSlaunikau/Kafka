@@ -20,7 +20,7 @@ public class PublisherService : IPublisherService
 
             var id = Guid.NewGuid();
 
-            await ProduceMessage(id, new TestFirstMessage
+            await ProduceMessage(id, new TaskStarted
             {
                 Id = id,
                 StartedDate = DateTime.Now,
@@ -29,11 +29,10 @@ public class PublisherService : IPublisherService
 
             await Wait(250, 500);
 
-            await ProduceMessage(id, new TestSecondMessage()
+            await ProduceMessage(id, new TaskCompleted()
             {
                 Id = id,
-                StartedDate = DateTime.Now,
-                StartedOn = startedOn
+                CompletedDate = DateTime.Now
             });
 
             await Wait(1000, 2000);

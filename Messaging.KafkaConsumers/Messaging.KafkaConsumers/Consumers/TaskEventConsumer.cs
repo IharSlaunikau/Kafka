@@ -19,11 +19,11 @@ namespace Messaging.KafkaConsumers.Consumers
             var message = context.Message;
             switch (message)
             {
-                case TestFirstMessage started:
-                    LogEvent($"Task First started by {started.StartedOn} at {started.StartedDate}");
+                case TaskStarted started:
+                    LogEvent($"Task started by {started.StartedOn} at {started.StartedDate}");
                     break;
-                case TestSecondMessage started:
-                    LogEvent($"Task Second started on {started.StartedOn} at {started.StartedDate}");
+                case TaskCompleted started:
+                    LogEvent($"Task completed at {started.CompletedDate}");
                     break;
             }
             await Task.CompletedTask;

@@ -49,13 +49,17 @@ public class Program
     {
         services.AddLogging();
 
+        var loggerFactory = services.BuildServiceProvider().GetRequiredService<ILoggerFactory>();
+
         _ = ServiceResolver.RegisterSchemaAsync();
 
         services.RegisterSchemaRegistryClient();
-        services.RegisterMassTransit();
+        services.RegisterMassTransit(loggerFactory);
 
         services.AddSingleton<Worker>();
         services.RegisterBusinessServices(hostContext.Configuration);
+
+        services.AddHostedService<Worker>();
     }
 }
 
