@@ -1,6 +1,7 @@
 
 using System.Reflection;
 using MessagePublisher.Extensions;
+using Microsoft.Extensions.Configuration;
 
 namespace MessagePublisher;
 
@@ -47,6 +48,8 @@ public class Program
 
     private static void RegisterServices(HostBuilderContext hostContext, IServiceCollection services)
     {
+        var configuration = hostContext.Configuration;
+
         services.AddLogging();
 
         var loggerFactory = services.BuildServiceProvider().GetRequiredService<ILoggerFactory>();
@@ -57,7 +60,7 @@ public class Program
         services.RegisterMassTransit(loggerFactory);
 
         services.AddSingleton<Worker>();
-        services.RegisterBusinessServices(hostContext.Configuration);
+        services.RegisterBusinessServices(configuration);
 
         services.AddHostedService<Worker>();
     }

@@ -17,6 +17,7 @@ namespace Messaging.KafkaConsumers.Consumers
                 logger.LogInformation("{0:O} Received ({1} {2}) event: {3}", "", context.Message.Id, context.Message.GetType(), description);
 
             var message = context.Message;
+
             switch (message)
             {
                 case TaskStarted started:
@@ -26,6 +27,7 @@ namespace Messaging.KafkaConsumers.Consumers
                     LogEvent($"Task completed at {started.CompletedDate}");
                     break;
             }
+
             await Task.CompletedTask;
         }
     }

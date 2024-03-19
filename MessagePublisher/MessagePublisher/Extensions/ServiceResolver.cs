@@ -18,8 +18,8 @@ namespace MessagePublisher.Extensions;
 public static class ServiceResolver
 {
     private const string TaskEventsTopic = "task-events";
-    private const string KafkaBroker = "host.docker.internal:9092";
-    private const string SchemaRegistryUrl = "http://host.docker.internal:8081";
+    private const string KafkaBroker = "kafka-sbox.epm-eco.projects.epam.com:9095";
+    private const string SchemaRegistryUrl = "http://schema-registry-sbox.epm-eco.projects.epam.com:8081";
 
     public static void RegisterBusinessServices(this IServiceCollection services, IConfiguration configuration)
     {
@@ -84,6 +84,7 @@ public static class ServiceResolver
             busConfig.AddConsumer<TaskEventConsumer>();
 
             busConfig.UsingInMemory((context, config) => config.ConfigureEndpoints(context));
+
             busConfig.AddRider(riderConfig =>
             {
                 riderConfig.AddConsumer<TaskStartedConsumer>();
@@ -126,20 +127,20 @@ public static class ServiceResolver
                     // to support varying configuration if needed.
                     producerConfig.SetKeySerializer(new AvroSerializer<string>(schemaRegistryClient).AsSyncOverAsync());
                     producerConfig.SetValueSerializer(serializer.AsSyncOverAsync());
-
-
                 });
-
-                // Set up consumers and consuming
-                riderConfig.AddConsumersFromNamespaceContaining<TaskStarted>();
 
                 riderConfig.UsingKafka((riderContext, kafkaConfig) =>
                 {
                     kafkaConfig.Host(KafkaBroker);
+
+                    kafkaConfig.SecurityProtocol = SecurityProtocol.SaslSsl;
+
                     var groupId = Guid.NewGuid().ToString(); // always start from beginning
+
                     kafkaConfig.TopicEndpoint<Guid, ITaskEvent>(TaskEventsTopic, groupId, topicConfig =>
                     {
                         topicConfig.AutoOffsetReset = AutoOffsetReset.Earliest;
+
                         topicConfig.SetKeyDeserializer(new AvroDeserializer<Guid>(schemaRegistryClient, null).AsSyncOverAsync());
                         topicConfig.SetValueDeserializer(
                             new MultipleTypeDeserializer<ITaskEvent>(multipleTypeConfig, schemaRegistryClient)
@@ -150,8 +151,6 @@ public static class ServiceResolver
                         // Example of consuming base message type and being able to work with
                         // concrete subclass
                         topicConfig.ConfigureConsumer<TaskEventConsumer>(riderContext);
-
-                        topicConfig.CreateIfMissing();
                     });
                 });
             });
